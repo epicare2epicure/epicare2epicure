@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import MedicineTracker from './MedicineTracker';
 import SleepTracker from './SleepTracker';
 import SeizureJournal from './SeizureJournal';
@@ -6,9 +5,12 @@ import StressManagement from './StressManagement';
 
 type Page = 'dashboard' | 'medications' | 'sleep' | 'seizures' | 'stress';
 
-export default function Dashboard() {
-  const [currentPage, setCurrentPage] = useState<Page>('dashboard');
+interface DashboardProps {
+  currentPage: Page;
+  onNavigate: (page: Page) => void;
+}
 
+export default function Dashboard({ currentPage, onNavigate }: DashboardProps) {
   if (currentPage === 'medications') return <MedicineTracker />;
   if (currentPage === 'sleep') return <SleepTracker />;
   if (currentPage === 'seizures') return <SeizureJournal />;
@@ -22,25 +24,25 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <button onClick={() => setCurrentPage('medications')} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow text-left">
+        <button onClick={() => onNavigate('medications')} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow text-left">
           <span className="text-2xl">💊</span>
           <h3 className="font-semibold text-slate-700 mt-3">Medications</h3>
           <p className="text-sm text-slate-500 mt-1">Track your medications</p>
         </button>
 
-        <button onClick={() => setCurrentPage('sleep')} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow text-left">
+        <button onClick={() => onNavigate('sleep')} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow text-left">
           <span className="text-2xl">🌙</span>
           <h3 className="font-semibold text-slate-700 mt-3">Sleep</h3>
           <p className="text-sm text-slate-500 mt-1">Monitor sleep patterns</p>
         </button>
 
-        <button onClick={() => setCurrentPage('seizures')} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow text-left">
+        <button onClick={() => onNavigate('seizures')} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow text-left">
           <span className="text-2xl">📋</span>
           <h3 className="font-semibold text-slate-700 mt-3">Seizures</h3>
           <p className="text-sm text-slate-500 mt-1">Journal seizure activity</p>
         </button>
 
-        <button onClick={() => setCurrentPage('stress')} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow text-left">
+        <button onClick={() => onNavigate('stress')} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow text-left">
           <span className="text-2xl">🧘</span>
           <h3 className="font-semibold text-slate-700 mt-3">Stress</h3>
           <p className="text-sm text-slate-500 mt-1">Manage stress & mood</p>
