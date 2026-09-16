@@ -71,6 +71,15 @@ export default function SleepTracker() {
     ? Math.round(last7.reduce((acc, e) => acc + e.quality, 0) / last7.length * 10) / 10
     : 0;
 
+  const bedtimes = last7.map(e => {
+    const [h, m] = e.bedtime.split(':').map(Number);
+    return h * 60 + m;
+  });
+  const avgBedtime = bedtimes.length > 0 ? bedtimes.reduce((a, b) => a + b, 0) / bedtimes.length : 0;
+  const bedtimeVariance = bedtimes.length > 0
+    ? Math.sqrt(bedtimes.reduce((acc, t) => acc + Math.pow(t - avgBedtime, 2), 0) / bedtimes.length)
+    : 0;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -89,7 +98,7 @@ export default function SleepTracker() {
       <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-5 border border-indigo-100">
         <h3 className="font-semibold text-indigo-800 mb-2">💡 Sleep & Epilepsy</h3>
         <p className="text-sm text-indigo-700">
-          Sleep deprivation is one of the most common seizure triggers. Aim for 7-9 hours of consistent, quality sleep each night.
+          Sleep deprivation is one of the most common seizure triggers. Aim for 7-9 hours of consistent, quality sleep each night. Maintaining a regular sleep schedule can significantly reduce seizure frequency.
         </p>
       </div>
 
@@ -145,7 +154,7 @@ export default function SleepTracker() {
               <textarea
                 value={newEntry.notes}
                 onChange={e => setNewEntry(prev => ({ ...prev, notes: e.target.value }))}
-                placeholder="Any observations?"
+                placeholder="Any observations? (e.g., restless, vivid dreams, etc.)"
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
                 rows={2}
               />
@@ -165,7 +174,7 @@ export default function SleepTracker() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
           <p className="text-sm text-slate-500">Avg. Duration (7d)</p>
           <p className="text-2xl font-bold text-slate-800 mt-1">{avgDuration}h</p>
@@ -176,6 +185,16 @@ export default function SleepTracker() {
         <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
           <p className="text-sm text-slate-500">Avg. Quality (7d)</p>
           <p className="text-2xl font-bold text-slate-800 mt-1">{avgQuality}/5</p>
+          <p className="text-xs text-slate-400 mt-1">
+            {avgQuality >= 4 ? 'Excellent' : avgQuality >= 3 ? 'Good' : avgQuality > 0 ? 'Needs work' : 'No data'}
+          </p>
+        </div>
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+          <p className="text-sm text-slate-500">Bedtime Consistency</p>
+          <p className="text-2xl font-bold text-slate-800 mt-1">±{Math.round(bedtimeVariance)} min</p>
+          <p className={`text-xs mt-1 ${bedtimeVariance <= 30 ? 'text-green-600' : 'text-orange-600'}`}>
+            {bedtimeVariance <= 30 ? '✓ Consistent' : 'Try to be more regular'}
+          </p>
         </div>
       </div>
 
